@@ -14,5 +14,8 @@
         "css": ["css/content.css"],
         "run_at": "document_end"
     }],
+    "permissions": [
+        "storage"
+    ],
     "web_accessible_resources": ["fonts/*", "js/inject.js"]
 }

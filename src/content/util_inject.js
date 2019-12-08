@@ -2,7 +2,19 @@
  *@author zhouyutao
  */
 
-
+/**
+ * 初始化数据
+ */
+export function initData (data) {
+    try {
+        data = JSON.parse(data)
+    }catch(err) {
+        window.alert('数据格式有误，请检查')
+    }
+    window.localStorage.setItem('sf_auto_translate', JSON.stringify({
+        ...data
+    }));
+}
 /**
  *  获取数据
  *  @return {String} 返回数据
@@ -53,14 +65,12 @@ export function clearData() {
  * @returns {String}      替换后的字符串
  * @return {*} 返回
  */
-export function _(str) {
+export function _(str,...args) {
 
     let langMap = JSON.parse(getData()) || {};
 
     if (langMap && langMap.hasOwnProperty(str)) {
         str = langMap[str];
-    }
-    return str
         /**
          * 字串中可以包含形如 {#mark#} 的文本，它的作用是用于附加额外语境信息。
          * 例如中文里“启用”，可以是形容词，表示此条记录启用；也可以是动词，点击即启用此记录；
@@ -70,16 +80,18 @@ export function _(str) {
          * “启用{#verb#}” -> “Enable”
          * 如果没有翻译表，则自动去掉额外标识，翻译为“启用”
          */
-        // return str.replace(/\{(\d+|#\w+#)\}/g, function (m, i) {
-        //     i = parseInt(i, 10);
-        //     if (isNaN(i)) {
-        //         return '';
-        //     }
-        //     if (i >= 0 && i < args.length) {
-        //         return args[i];
-        //     }
-        //     return m;
-        // });
+        return str.replace(/\{(\d+|#\w+#)\}/g, function (m, i) {
+            i = parseInt(i, 10);
+            if (isNaN(i)) {
+                return '';
+            }
+            if (i >= 0 && i < args.length) {
+                return args[i];
+            }
+            return m;
+        });
+    }
+    return str
 }
 
 

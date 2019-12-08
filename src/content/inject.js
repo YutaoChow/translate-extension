@@ -2,7 +2,7 @@
  * @author zhouyutao
  */
 
-import { saveData, initI18n } from './util.js';
+import { saveData, initI18n, initData } from './util_inject.js';
 
 let menu, anchorNode;
 /**
@@ -17,6 +17,7 @@ function createMenu(e, string) {
     menu = document.createElement('div');
     menu.innerText = '翻译';
     menu.onclick = function() {
+        //翻译请求
         window.postMessage({
             type: 'sf-select-text',
             text: string
@@ -47,6 +48,7 @@ function initEvents() {
             menu = null;
         }
     };
+    //选中文字右键
     window.oncontextmenu = function(e) {
         let selection = document.getSelection(),
             string = selection.toString();
@@ -58,13 +60,24 @@ function initEvents() {
     };
     window.addEventListener("message", function(e) {
         let data = e.data;
-        if (data.type && data.type === 'sf-translate-text') {
-            anchorNode && (anchorNode.textContent = data.english);
-            saveData(data.chinese, data.english);
+        //获取翻译数据
+        if (data.type) {
+            switch(data.type) {
+                case 'sf-translate-text':
+                    anchorNode && (anchorNode.textContent = data.english);
+                    saveData(data.chinese, data.english);
+                    break
+                case 'init-translate-data':
+                    initData(data.data);
+                    initI18n();
+                    break
+                default:
+            }
         }
     }, false);
+    window.postMessage({
+        type: 'inject-success'
+    },'*')
 }
 
 initEvents();
-
-initI18n();
