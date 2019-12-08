@@ -40,10 +40,11 @@ export default {
     methods: {
         submit () {
             this.dialogFormVisible = false;
-            this.$emit('submit', this.data);
+            this.$emit('submit', this.form);
         },
-        open (data) {
-            this.data = data;
+        open (string) {
+            this.form.chinese = string;
+            this.form.english = '';
             this.dialogFormVisible = true;
         }
     }
